@@ -8,5 +8,4 @@ public class mainClass {
 		// TODO Auto-generated method stub
 		new Main();
 	}
-
 }

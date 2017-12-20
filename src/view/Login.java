@@ -1,10 +1,21 @@
 package view;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import dao.MemberDao;
+import dto.MemberDto;
 
 public class Login extends JFrame implements ActionListener {
 
@@ -23,7 +34,7 @@ public class Login extends JFrame implements ActionListener {
 		contentPane.setBackground(Color.yellow);
 		contentPane.setLayout(null);
 
-		JLabel title = new JLabel("<html><span style='color:white;'>Sign In</span></html>");
+		JLabel title = new JLabel("Sign In");
 		title.setBounds(150, 68, 200, 20);
 		contentPane.add(title);
 
@@ -76,10 +87,18 @@ public class Login extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
-
-
+		
 		if(obj == signIn){
-
+			String _id = id.getText();
+			char[] _pwd = pwd.getPassword();
+			
+			MemberDao dao = MemberDao.getInstance();
+			MemberDto member = dao.search(_id, _pwd);
+			
+			if(member==null) {
+				JOptionPane.showMessageDialog(null, "아이디 및 비밀번호가 일치하지 않습니다.");
+				pwd.setText("");
+			}
 		}else if(obj == signUp){
 			new Account();
 			this.dispose();
