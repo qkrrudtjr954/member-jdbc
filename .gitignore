@@ -1,6 +1,11 @@
 .idea
+
 *.iml
 /bin/
 .classpath
 .project
 .settings
+
+
+
+out/
