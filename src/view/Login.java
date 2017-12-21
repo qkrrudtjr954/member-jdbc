@@ -15,6 +15,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import dao.MemberDao;
+import delegator.Delegator;
 import dto.MemberDto;
 
 public class Login extends JFrame implements ActionListener {
@@ -56,28 +57,15 @@ public class Login extends JFrame implements ActionListener {
 		contentPane.add(pwd);
 
 
-
-		JPanel panel = new JPanel();
-		panel.setSize(150, 100);
-		panel.setLayout(new FlowLayout());
-		panel.setLocation(100, 450);
-
 		signIn = new JButton("SIGN IN");
-		signIn.setSize(150, 50);
+		signIn.setBounds(100, 400, 150, 20);
 		signIn.addActionListener(this);
-		panel.add(signIn);
+		contentPane.add(signIn);
 
 		signUp = new JButton("SIGN UP");
-		signUp.setSize(75, 50);
+		signUp.setBounds(100, 440, 150, 20);
 		signUp.addActionListener(this);
-
-		JButton h = new JButton("SIGN UP");
-		h.setSize(75, 50);
-		h.addActionListener(this);
-
-		panel.add(h);
-
-		contentPane.add(panel);
+		contentPane.add(signUp);
 
 		setBounds(100, 100, 375, 667);
 		setResizable(false);
@@ -98,12 +86,14 @@ public class Login extends JFrame implements ActionListener {
 			if(member==null) {
 				JOptionPane.showMessageDialog(null, "아이디 및 비밀번호가 일치하지 않습니다.");
 				pwd.setText("");
+			}else {
+				Delegator.getInstance().setCurrent_User(member);
+				new Bbs();
+				this.dispose();
 			}
 		}else if(obj == signUp){
 			new Account();
 			this.dispose();
-		}else{
-
 		}
 	}
 

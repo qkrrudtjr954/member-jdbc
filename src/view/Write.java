@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 import dao.MemberDao;
 import dto.MemberDto;
 
-public class Account extends JFrame implements ActionListener {
+public class Write extends JFrame implements ActionListener {
 
 	JTextField id;
 	JTextField name;
@@ -33,7 +33,7 @@ public class Account extends JFrame implements ActionListener {
 	JLabel label;
 	
 
-	public Account(){
+	public Write(){
 		super("Sign Up");
 
 		Container contentPane = getContentPane();

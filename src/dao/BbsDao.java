@@ -4,45 +4,57 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import db.DBClose;
 import db.DBConnection;
-import dto.MemberDto;
+import dto.BbsDto;
 
-public class MemberDao {
-	private static MemberDao dao = null;
+public class BbsDao {
+	private static BbsDao dao = null;
 	
-	private MemberDao() {
+	private BbsDao() {
 		
 	}
 	
-	public static MemberDao getInstance() {
+	public static BbsDao getInstance() {
 		if(dao==null) {
-			dao = new MemberDao();
+			dao = new BbsDao();
 		}
 		return dao;
 	}
 	
-	public boolean getId(String id) {
-		//result == true 중복하는 값이 있다
-		//result == false 중복하는 값이 없다.
-		boolean result = false;
-		
-		String sql = "select id from member where id='"+id+"'";
+	public List<BbsDto> getBbsList(){
+		String sql = " select * from bbs where del != 1";
 		
 		Connection conn = DBConnection.makeConnection();
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 		
-		System.out.println("dao.getId()  sql : "+sql);
+		ResultSet rs = null;
+		List<BbsDto> bbsList = new ArrayList<>();
+		
+		System.out.println("sql : "+sql);
 		
 		try {
 			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery(sql);
+			rs = pstmt.executeQuery(sql);	// query 를 실행하라 그리고 그 값을 rs에 저장해라.
 			
-			if(rs.next()) {
-				// rs에 값이 있다면 중복하는 값이 이미 테이블에 존재한다는 뜻이다.
-				result = true;
+			
+			while(rs.next()) {
+				BbsDto bbs =  new BbsDto();
+				
+				bbs.setSeq(rs.getInt("seq"));
+				bbs.setId(rs.getString("id"));
+				
+				bbs.setTitle(rs.getString("title"));
+				bbs.setContent(rs.getString("content"));
+				bbs.setWdate(rs.getString("wdate"));
+				
+				bbs.setDel(rs.getInt("del"));
+				bbs.setReadcount(rs.getInt("readcount"));
+				
+				bbsList.add(bbs);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -50,21 +62,21 @@ public class MemberDao {
 		} finally {
 			DBClose.close(pstmt, conn, rs);
 		}
-		return result;
+		
+		return bbsList;
 	}
 	
-	public MemberDto search(String id, char[] pwd) {
-		String pwds = new String(pwd);
-		
+	
+	public List<BbsDto> search(String query) {
 		String sql = " select id, email, name, auth "
 				+ " from member "
-				+ " where id='"+id+"' and pwd='"+pwds+"'";
+				+ " where id=' '";
 		
 		Connection conn = DBConnection.makeConnection();
 		PreparedStatement pstmt = null;
 		
 		ResultSet rs = null;
-		MemberDto member = null;
+		List<BbsDto> bbsList = null;
 		
 		System.out.println("sql : "+sql);
 		
@@ -73,12 +85,10 @@ public class MemberDao {
 			rs = pstmt.executeQuery(sql);	// query 를 실행하라 그리고 그 값을 rs에 저장해라.
 			
 			if(rs.next()) {
-				member = new MemberDto();
-				member.setId(rs.getString("id"));
-				member.setName(rs.getString("name"));
-				member.setPwd(pwd);
-				member.setAuth(rs.getInt("auth"));
-				member.setEmail(rs.getString("email"));
+				BbsDto bbs =  new BbsDto();
+				
+				
+				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -86,12 +96,12 @@ public class MemberDao {
 		} finally {
 			DBClose.close(pstmt, conn, rs);
 		}
-		return member;
+		return bbsList;
 	}
 	
 	
 	
-	public int addMember(String id, char[] pwd, String name, String email) {
+	public int insert(String id, char[] pwd, String name, String email) {
 		// 접속을 가져온다.
 		Connection conn = DBConnection.makeConnection();
 		PreparedStatement stmt = null;
@@ -123,7 +133,7 @@ public class MemberDao {
 	}
 	
 	
-	public int delMember(int id, char[] pwd) {
+	public int delete(int id, char[] pwd) {
 		
 		String pwds = new String(pwd);
 		
@@ -150,43 +160,5 @@ public class MemberDao {
 
 		return count;
 	}
-	
-	
-	public int addMember(MemberDto dto) {
-		String sql = " insert into member (id, pwd, name, email, auth ) " + " values (?, ?, ?, ?, 3 ) ";
-
-		Connection conn = null;
-		PreparedStatement stmt = null;
-
-		int count = 0;
-
-		System.out.println("sql : " + sql);
-
-		try {
-			conn = DBConnection.makeConnection();
-			System.out.println("1/6 addMemeber Success");
-			stmt = conn.prepareStatement(sql); // initializing
-			System.out.println("2/6 addMemeber Success");
-			
-			
-			stmt.setString(1, dto.getId());
-			stmt.setString(2, new String(dto.getPwd()));
-			stmt.setString(3, dto.getName());
-			stmt.setString(4, dto.getEmail());
-			
-			// count는 바뀐 수
-			count = stmt.executeUpdate(sql); // .executeUpdate() : 데이터베이스를 바꾸는 작업 (insert, update, delete)
-			System.out.println("3/6 addMemeber Success");
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("addMemeber Fail");
-		} finally {
-			System.out.println("4/6 addMemeber Success");
-			DBClose.close(stmt, conn, null);
-		}
-
-		return count;
-	}
 }
+
