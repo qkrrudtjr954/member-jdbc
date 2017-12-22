@@ -57,7 +57,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		wdate.setBounds(220, 70, 200, 20);
 		contentPane.add(wdate);
 		
-		JLabel readcount = new JLabel("조회수 : "+bbsDto.getReadcount()+1);
+		JLabel readcount = new JLabel("조회수 : "+(bbsDto.getReadcount()+1));
 		readcount.setBounds(10, 70, 100, 20);
 		contentPane.add(readcount);
 		
