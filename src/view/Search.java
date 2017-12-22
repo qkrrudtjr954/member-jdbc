@@ -73,24 +73,24 @@ public class Search extends JFrame implements MouseListener, ActionListener{
 		contentPane.add(jScrPane);
 		
 		
-		post = new JButton("Post");
+		post = new JButton("글쓰기");
 		post.setBounds(100, 420, 150, 20);
 		post.addActionListener(this);
 		contentPane.add(post);
 		
 		
-		search = new JButton("Search");
-		search.setBounds(100, 440, 150, 20);
+		searchField = new JTextField();
+		searchField.setBounds(20, 480, 150, 20);
+		contentPane.add(searchField);
+		
+		search = new JButton("검색");
+		search.setBounds(170, 480, 150, 20);
 		search.addActionListener(this);
 		contentPane.add(search);
 		
-		searchField = new JTextField();
-		searchField.setBounds(100, 460, 150, 20);
-		contentPane.add(searchField);
 		
-		
-		myPost = new JButton("my post");
-		myPost.setBounds(100, 480, 150, 20);
+		myPost = new JButton("내가 쓴 글");
+		myPost.setBounds(100, 440, 150, 20);
 		myPost.addActionListener(this);
 		contentPane.add(myPost);
 		

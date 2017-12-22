@@ -40,6 +40,9 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		super("Detail");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
+		BbsDao dao = BbsDao.getInstance();
+		dao.plusReadCount(bbsDto);
+		
 		Container contentPane = getContentPane();
         contentPane.setBackground(Color.yellow);
         contentPane.setLayout(null);
@@ -54,7 +57,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		wdate.setBounds(220, 70, 200, 20);
 		contentPane.add(wdate);
 		
-		JLabel readcount = new JLabel("조회수 : "+bbsDto.getReadcount());
+		JLabel readcount = new JLabel("조회수 : "+bbsDto.getReadcount()+1);
 		readcount.setBounds(10, 70, 100, 20);
 		contentPane.add(readcount);
 		
@@ -79,7 +82,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		if (bbsDto.getId().equals(Delegator.getInstance().getCurrent_User().getId())) {
 	
 			deleteBtn = new JButton("Delete");
-			deleteBtn.setBounds(10, 480, 100, 50);
+			deleteBtn.setBounds(100, 490, 75, 20);
 			deleteBtn.addActionListener((ActionEvent e)-> {
 				if(JOptionPane.showConfirmDialog(null, "정말 삭제하겠습니까?") == 0) {
 					System.out.println("delete");
@@ -91,7 +94,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 			contentPane.add(deleteBtn);
 			
 			editBtn = new JButton("Edit");
-			editBtn.setBounds(110, 480, 100, 50);
+			editBtn.setBounds(175, 490, 75, 20);
 			editBtn.addActionListener((ActionEvent e)-> {
 				
 			});

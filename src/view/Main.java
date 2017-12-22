@@ -21,7 +21,7 @@ public class Main extends JFrame {
 		contentPane.setLayout(null);
 
 		JButton button = new JButton("start");
-		button.setBounds(50, 50, 100, 100);
+		button.setBounds(110, 400, 150, 50);
 		button.setBorder(new LineBorder(Color.black, 2));
 
 		button.addActionListener((ActionEvent e) -> {

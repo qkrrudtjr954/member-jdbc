@@ -72,27 +72,27 @@ public class MyPost extends JFrame implements MouseListener, ActionListener{
 		contentPane.add(jScrPane);
 		
 		
-		post = new JButton("Post");
+		
+		post = new JButton("글쓰기");
 		post.setBounds(100, 420, 150, 20);
 		post.addActionListener(this);
 		contentPane.add(post);
 		
 		
-		search = new JButton("Search");
-		search.setBounds(100, 440, 150, 20);
+		searchField = new JTextField();
+		searchField.setBounds(20, 480, 150, 20);
+		contentPane.add(searchField);
+		
+		search = new JButton("검색");
+		search.setBounds(170, 480, 150, 20);
 		search.addActionListener(this);
 		contentPane.add(search);
 		
-		searchField = new JTextField();
-		searchField.setBounds(100, 460, 150, 20);
-		contentPane.add(searchField);
 		
-		
-		allPost = new JButton("all post");
-		allPost.setBounds(100, 480, 150, 20);
+		allPost = new JButton("모든 글보기");
+		allPost.setBounds(100, 440, 150, 20);
 		allPost.addActionListener(this);
 		contentPane.add(allPost);
-		
 		
 		
 		setBounds(100, 100, 375, 667);
@@ -109,7 +109,7 @@ public class MyPost extends JFrame implements MouseListener, ActionListener{
 			new Write();
 			this.dispose();
 		}else if(obj == search) {
-			String str = search.getText();
+			String str = searchField.getText();
 			
 			BbsDao.getInstance().search(str);
 		}else if(obj == allPost) {
