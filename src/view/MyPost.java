@@ -20,7 +20,7 @@ import dao.BbsDao;
 import dto.BbsDto;
 
 
-public class Bbs extends JFrame implements MouseListener, ActionListener{
+public class MyPost extends JFrame implements MouseListener, ActionListener{
     
 	JTable table;
 	JScrollPane jScrPane;
@@ -34,24 +34,24 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 	JButton post;
 	JTextField searchField;
 	JButton search;
-	JButton myPost;
+	JButton allPost;
 	
 	
-	public Bbs() {
+	public MyPost() {
 		
-		super("Bbs List");
+		super("My Bbs List");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		Container contentPane = getContentPane();
         contentPane.setBackground(Color.yellow);
         contentPane.setLayout(null);
         
-        JLabel title = new JLabel("Post List");
+        JLabel title = new JLabel("My Post List");
 		title.setBounds(150, 68, 200, 20);
 		contentPane.add(title);
 		
 		BbsDao bbsDao = BbsDao.getInstance();
-		list = bbsDao.getBbsList();
+		list = bbsDao.getMyBbsList();
 		
 		rowData = new Object[list.size()][columNames.length];
 		
@@ -88,10 +88,10 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		contentPane.add(searchField);
 		
 		
-		myPost = new JButton("my post");
-		myPost.setBounds(100, 480, 150, 20);
-		myPost.addActionListener(this);
-		contentPane.add(myPost);
+		allPost = new JButton("all post");
+		allPost.setBounds(100, 480, 150, 20);
+		allPost.addActionListener(this);
+		contentPane.add(allPost);
 		
 		
 		
@@ -112,8 +112,8 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 			String str = search.getText();
 			
 			BbsDao.getInstance().search(str);
-		}else if(obj == myPost) {
-			new MyPost();
+		}else if(obj == allPost) {
+			new Bbs();
 			this.dispose();
 		}
 	}

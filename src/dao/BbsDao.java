@@ -9,6 +9,7 @@ import java.util.List;
 
 import db.DBClose;
 import db.DBConnection;
+import delegator.Delegator;
 import dto.BbsDto;
 
 public class BbsDao {
@@ -67,10 +68,53 @@ public class BbsDao {
 	}
 	
 	
+	public List<BbsDto> getMyBbsList(){
+		String sql = " select * from bbs where del != 1 and id='"
+					+ Delegator.getInstance().getCurrent_User().getId()+"'";
+		
+		Connection conn = DBConnection.makeConnection();
+		PreparedStatement pstmt = null;
+		
+		ResultSet rs = null;
+		List<BbsDto> myBbsList = new ArrayList<>();
+		
+		System.out.println("sql : "+sql);
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery(sql);	// query 를 실행하라 그리고 그 값을 rs에 저장해라.
+			
+			
+			while(rs.next()) {
+				BbsDto bbs =  new BbsDto();
+				
+				bbs.setSeq(rs.getInt("seq"));
+				bbs.setId(rs.getString("id"));
+				
+				bbs.setTitle(rs.getString("title"));
+				bbs.setContent(rs.getString("content"));
+				bbs.setWdate(rs.getString("wdate"));
+				
+				bbs.setDel(rs.getInt("del"));
+				bbs.setReadcount(rs.getInt("readcount"));
+				
+				myBbsList .add(bbs);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			DBClose.close(pstmt, conn, rs);
+		}
+		
+		return myBbsList ;
+	}
+	
+	
 	public List<BbsDto> search(String query) {
 		String sql = " select id, email, name, auth "
 				+ " from member "
-				+ " where id=' '";
+				+ " where id=''";
 		
 		Connection conn = DBConnection.makeConnection();
 		PreparedStatement pstmt = null;
