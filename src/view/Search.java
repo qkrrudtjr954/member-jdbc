@@ -22,7 +22,7 @@ import dao.BbsDao;
 import dto.BbsDto;
 
 
-public class Bbs extends JFrame implements MouseListener, ActionListener{
+public class Search extends JFrame implements MouseListener, ActionListener{
     
 	JTable table;
 	JScrollPane jScrPane;
@@ -39,7 +39,7 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 	JButton myPost;
 	
 	
-	public Bbs() {
+	public Search(List<BbsDto> list) {
 		
 		super("Bbs List");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -52,8 +52,7 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		title.setBounds(150, 68, 200, 20);
 		contentPane.add(title);
 		
-		BbsDao bbsDao = BbsDao.getInstance();
-		list = bbsDao.getBbsList();
+		BbsDao dao = BbsDao.getInstance();
 		
 		rowData = new Object[list.size()][columnNames.length];
 		
@@ -114,16 +113,16 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 			String query = searchField.getText();
 			
 			if(query.trim().equals("")) {
-				JOptionPane.showMessageDialog(null, "찾고 싶은 문자를 입력하세요.");
+				JOptionPane.showMessageDialog(null, "찾고 싶은 문자를 입력해주세요.");
 			}else {
 				List<BbsDto> list = bbsDao.search(query);
-								
+				
 				if(list == null) {
 					JOptionPane.showMessageDialog(null, "검색 결과가 없습니다.");
 				}else {
 					new Search(list);
 					this.dispose();
-				}
+				}				
 			}
 		}else if(obj == myPost) {
 			new MyPost();

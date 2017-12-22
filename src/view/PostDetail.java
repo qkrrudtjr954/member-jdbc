@@ -15,19 +15,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
 import dao.BbsDao;
 import dto.BbsDto;
 
 
-public class Bbs extends JFrame implements MouseListener, ActionListener{
+public class PostDetail extends JFrame implements MouseListener, ActionListener{
     
 	JTable table;
 	JScrollPane jScrPane;
 	
-	String columnNames[] = { "No", "title", "readcount", "wdate" };
+	String columNames[] = { "No", "title", "readcount", "wdate" };
 	
 	Object rowData[][];
 	
@@ -39,7 +37,7 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 	JButton myPost;
 	
 	
-	public Bbs() {
+	public PostDetail(BbsDto bbsDto) {
 		
 		super("Bbs List");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -48,53 +46,20 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
         contentPane.setBackground(Color.yellow);
         contentPane.setLayout(null);
         
-        JLabel title = new JLabel("Post List");
+        JLabel title = new JLabel("Post Detail");
 		title.setBounds(150, 68, 200, 20);
 		contentPane.add(title);
 		
-		BbsDao bbsDao = BbsDao.getInstance();
-		list = bbsDao.getBbsList();
-		
-		rowData = new Object[list.size()][columnNames.length];
-		
-		for (int i = 0; i < list.size(); i++) {
-			rowData[i][0] = list.get(i).getSeq();
-			rowData[i][1] = list.get(i).getTitle();
-			rowData[i][2] = list.get(i).getReadcount();
-			rowData[i][3] = list.get(i).getWdate();
-		}
-		
-		
-		// 앞은 데이터, 뒤는 제목들
-		table = new JTable(rowData, columnNames);
-		table.addMouseListener(this);
-		jScrPane = new JScrollPane(table);
-		
-		jScrPane.setBounds(0, 100, 375, 300);
-		contentPane.add(jScrPane);
-		
 		
 		post = new JButton("Post");
-		post.setBounds(100, 420, 150, 20);
+		post.setBounds(100, 460, 150, 20);
 		post.addActionListener(this);
 		contentPane.add(post);
-		
-		
-		search = new JButton("Search");
-		search.setBounds(100, 440, 150, 20);
-		search.addActionListener(this);
-		contentPane.add(search);
-		
-		searchField = new JTextField();
-		searchField.setBounds(100, 460, 150, 20);
-		contentPane.add(searchField);
-		
 		
 		myPost = new JButton("my post");
 		myPost.setBounds(100, 480, 150, 20);
 		myPost.addActionListener(this);
 		contentPane.add(myPost);
-		
 		
 		
 		setBounds(100, 100, 375, 667);
@@ -110,34 +75,11 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		if(obj == post) {
 			new Write();
 			this.dispose();
-		}else if(obj == search) {
-			String query = searchField.getText();
-			
-			if(query.trim().equals("")) {
-				JOptionPane.showMessageDialog(null, "찾고 싶은 문자를 입력하세요.");
-			}else {
-				List<BbsDto> list = bbsDao.search(query);
-								
-				if(list == null) {
-					JOptionPane.showMessageDialog(null, "검색 결과가 없습니다.");
-				}else {
-					new Search(list);
-					this.dispose();
-				}
-			}
 		}else if(obj == myPost) {
 			new MyPost();
 			this.dispose();
 		}
 	}
-	
-	// list 를 인자로 받아 테이블을 refresh 해주는 함수
-	public void refreshTable(List<BbsDto> list) {
-		
-	}
-	
-	
-	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub

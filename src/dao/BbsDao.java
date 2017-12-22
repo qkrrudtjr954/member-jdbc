@@ -11,6 +11,7 @@ import db.DBClose;
 import db.DBConnection;
 import delegator.Delegator;
 import dto.BbsDto;
+import view.Bbs;
 
 public class BbsDao {
 	private static BbsDao dao = null;
@@ -35,7 +36,7 @@ public class BbsDao {
 		ResultSet rs = null;
 		List<BbsDto> bbsList = new ArrayList<>();
 		
-		System.out.println("sql : "+sql);
+		System.out.println(" * BbsDao getBbsList sql : "+sql);
 		
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -78,7 +79,7 @@ public class BbsDao {
 		ResultSet rs = null;
 		List<BbsDto> myBbsList = new ArrayList<>();
 		
-		System.out.println("sql : "+sql);
+		System.out.println(" * BbsDao  getMyBbsList() sql : "+sql);
 		
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -111,28 +112,39 @@ public class BbsDao {
 	}
 	
 	
-	public List<BbsDto> search(String query) {
-		String sql = " select id, email, name, auth "
-				+ " from member "
-				+ " where id=''";
+	public List<BbsDto> search(String str) {
+		String sql = " select * from bbs "
+				+ " where (id like '%"+str+"%' or "
+				+ " title like '%"+str+"%' or "
+				+ " content like '%"+str+"%' ) and "
+				+ " del != 1 ";
 		
 		Connection conn = DBConnection.makeConnection();
 		PreparedStatement pstmt = null;
 		
 		ResultSet rs = null;
-		List<BbsDto> bbsList = null;
+		List<BbsDto> bbsList = new ArrayList<BbsDto>();
 		
-		System.out.println("sql : "+sql);
+		System.out.println(" * BbsDao .search() sql : "+sql);
 		
 		try {
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery(sql);	// query 를 실행하라 그리고 그 값을 rs에 저장해라.
 			
-			if(rs.next()) {
-				BbsDto bbs =  new BbsDto();
+			while(rs.next()) {
+				BbsDto bbsDto =  new BbsDto();
 				
+				bbsDto.setSeq(rs.getInt("seq"));
+				bbsDto.setId(rs.getString("id"));
 				
+				bbsDto.setTitle(rs.getString("title"));
+				bbsDto.setContent(rs.getString("content"));
+				bbsDto.setWdate(rs.getString("wdate"));
 				
+				bbsDto.setDel(rs.getInt("del"));
+				bbsDto.setReadcount(rs.getInt("readcount"));
+				
+				bbsList.add(bbsDto);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -145,26 +157,30 @@ public class BbsDao {
 	
 	
 	
-	public int insert(String id, char[] pwd, String name, String email) {
+	public BbsDto insert(String title, String content) {
 		// 접속을 가져온다.
 		Connection conn = DBConnection.makeConnection();
 		PreparedStatement stmt = null;
 		
-		String pwds = new String(pwd);
+		String id = Delegator.getInstance().getCurrent_User().getId();
+		String sql = " insert into bbs "
+				+ " values(seq_bbs.nextval, '"+id+"', '"+title+"', '"+content+"', sysdate, 0, 0) ";
 		
-		String sql = ""
-				+ "insert into member(id, pwd, name, email, auth) "
-				+ "values('"+id+"', '"+pwds+"', '"+name+"', '"+email+"', 3)";
+		BbsDto bbsDto = null;
 		
 		int count = 0;
 		
-		System.out.println("sql : " + sql);
-		
+		System.out.println(" * BbsDao .insert()sql : " + sql);
+
 		try {
 			
 			stmt = conn.prepareStatement(sql);	//	initializing
 			count = stmt.executeUpdate(sql);	// .executeUpdate() : 데이터베이스를 바꾸는 작업 (insert, update, delete)
 			// count는 바뀐 수
+			
+			if (count > 0) {
+				bbsDto = getLastBbsDtoByTitle(title, content);
+			}
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -173,9 +189,47 @@ public class BbsDao {
 			DBClose.close(stmt, conn, null);
 		}
 		
-		return count;
+		return bbsDto;
 	}
 	
+	
+	public BbsDto getLastBbsDtoByTitle(String title, String content) {
+		BbsDto bbsDto = new BbsDto();
+		
+		String id = Delegator.getInstance().getCurrent_User().getId();
+		
+		Connection conn = DBConnection.makeConnection();
+		PreparedStatement ptmt = null;
+		ResultSet rs = null;
+		
+		String sql = "select * from bbs where id='"+id+"' and title='"+title+"' and content='"+content+"'";
+		
+		System.out.println(" * BbsDao .getLastBbsDtoByTitle sql : "+sql);
+		
+		try {
+			ptmt = conn.prepareStatement(sql);
+			rs = ptmt.executeQuery();
+			
+			while(rs.next()) {
+				bbsDto.setSeq(rs.getInt("seq"));
+				bbsDto.setId(rs.getString("id"));
+				
+				bbsDto.setTitle(rs.getString("title"));
+				bbsDto.setContent(rs.getString("content"));
+				bbsDto.setWdate(rs.getString("wdate"));
+				
+				bbsDto.setDel(rs.getInt("del"));
+				bbsDto.setReadcount(rs.getInt("readcount"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(bbsDto);
+		
+		return bbsDto;
+	}
 	
 	public int delete(int id, char[] pwd) {
 		
@@ -189,7 +243,7 @@ public class BbsDao {
 
 		int count = 0;
 		
-		System.out.println("sql : "+sql);
+		System.out.println(" * BbsDao .delete() sql : "+sql);
 		
 		try {
 			stmt = conn.prepareStatement(sql);

@@ -36,6 +36,8 @@ public class Account extends JFrame implements ActionListener {
 	public Account(){
 		super("Sign Up");
 
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
 		Container contentPane = getContentPane();
 		contentPane.setBackground(Color.yellow);
 		contentPane.setLayout(null);
