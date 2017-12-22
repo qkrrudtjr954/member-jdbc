@@ -11,8 +11,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 import dao.BbsDao;
 import dto.BbsDto;
@@ -20,7 +22,7 @@ import dto.BbsDto;
 public class Write extends JFrame implements ActionListener {
 
 	JTextField title;
-	JTextArea content;
+	JTextPane content;
 	
 	
 	JLabel label;
@@ -52,9 +54,19 @@ public class Write extends JFrame implements ActionListener {
 		contentLabel.setBounds(20, 180, 100, 20);
 		contentPane.add(contentLabel);
 
-		content = new JTextArea();
+//		content = new JTextArea();
+//		content.setBounds(20, 200, 335, 200);
+//		contentPane.add(content);
+		
+		
+		content = new JTextPane();
+		content.setEditable(true);
 		content.setBounds(20, 200, 335, 200);
-		contentPane.add(content);
+		
+		JScrollPane panel = new JScrollPane(content);
+		panel.setBounds(20, 200, 335, 200);
+		
+		contentPane.add(panel);
 		
 		// --------------------------------------------------
 		label = new JLabel("---");

@@ -23,5 +23,9 @@ public class mainClass {
 //		new Write();
 		
 		new Main();
+		
+
+		
+		
 	}
 }

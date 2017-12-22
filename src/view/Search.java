@@ -52,7 +52,7 @@ public class Search extends JFrame implements MouseListener, ActionListener{
 		title.setBounds(150, 68, 200, 20);
 		contentPane.add(title);
 		
-		BbsDao dao = BbsDao.getInstance();
+		this.list = list;
 		
 		rowData = new Object[list.size()][columnNames.length];
 		
@@ -149,7 +149,8 @@ public class Search extends JFrame implements MouseListener, ActionListener{
 		
 		int rowNum = table.getSelectedRow();
 		// 생성자로 번호만 넘기면 다른 뷰에서도 접근이 가능하다.
-		JOptionPane.showConfirmDialog(null, list.get(rowNum));
+		new PostDetail(list.get(rowNum));
+		this.dispose();
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {

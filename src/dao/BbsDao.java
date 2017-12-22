@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JLabel;
+import javax.swing.JTextPane;
+
 import db.DBClose;
 import db.DBConnection;
 import delegator.Delegator;
@@ -202,7 +205,12 @@ public class BbsDao {
 		PreparedStatement ptmt = null;
 		ResultSet rs = null;
 		
-		String sql = "select * from bbs where id='"+id+"' and title='"+title+"' and content='"+content+"'";
+//		String sql = "select * from bbs where id='"+id+"' and title='"+title+"' and content='"+content+"'";
+		String sql = " select seq, id, title, content, to_char(wdate, 'yyyy-mm-dd hh:mi:ss') as date, content, del, readcount from bbs "
+				+ " where id='"+id+"' and "
+				+ " title='"+title+"' and "
+				+ " content ='"+content+"' ";
+		
 		
 		System.out.println(" * BbsDao .getLastBbsDtoByTitle sql : "+sql);
 		
@@ -216,7 +224,7 @@ public class BbsDao {
 				
 				bbsDto.setTitle(rs.getString("title"));
 				bbsDto.setContent(rs.getString("content"));
-				bbsDto.setWdate(rs.getString("wdate"));
+				bbsDto.setWdate(rs.getString("date"));
 				
 				bbsDto.setDel(rs.getInt("del"));
 				bbsDto.setReadcount(rs.getInt("readcount"));
@@ -230,12 +238,10 @@ public class BbsDao {
 		
 		return bbsDto;
 	}
-	
-	public int delete(int id, char[] pwd) {
-		
-		String pwds = new String(pwd);
-		
-		String sql = "delete from userdto where id='"+id+"' and pwd='"+pwds+"'";
+
+	public int delete(BbsDto bbsDto) {
+		// TODO Auto-generated method stub
+		String sql = "update bbs set del=1 where seq="+bbsDto.getSeq()+"";
 		
 		PreparedStatement stmt = null;
 		

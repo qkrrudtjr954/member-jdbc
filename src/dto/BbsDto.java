@@ -1,6 +1,7 @@
 package dto;
 
 import java.io.Serializable;
+
 /*
  * 
  drop table bbs cascade constraints;

@@ -2,62 +2,110 @@ package view;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 import dao.BbsDao;
+import dao.MemberDao;
+import delegator.Delegator;
 import dto.BbsDto;
 
 
 public class PostDetail extends JFrame implements MouseListener, ActionListener{
-    
-	JTable table;
-	JScrollPane jScrPane;
 	
-	String columNames[] = { "No", "title", "readcount", "wdate" };
-	
-	Object rowData[][];
-	
-	List<BbsDto> list = null;
-	
-	JButton post;
-	JTextField searchField;
-	JButton search;
+	JButton allPost;
 	JButton myPost;
 	
+	JButton deleteBtn;
+	JButton editBtn;
+	
+	
+	JLabel title;
+	JLabel wdate;
+	JTextPane content;
 	
 	public PostDetail(BbsDto bbsDto) {
 		
-		super("Bbs List");
+		super("Detail");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		Container contentPane = getContentPane();
         contentPane.setBackground(Color.yellow);
         contentPane.setLayout(null);
         
-        JLabel title = new JLabel("Post Detail");
-		title.setBounds(150, 68, 200, 20);
+
+        title = new JLabel(bbsDto.getTitle());
+		title.setBounds(150, 20, 200, 20);
+		title.setFont(new Font(bbsDto.getTitle(), Font.PLAIN, 25));
 		contentPane.add(title);
 		
+		wdate = new JLabel(bbsDto.getWdate());
+		wdate.setBounds(220, 70, 200, 20);
+		contentPane.add(wdate);
 		
-		post = new JButton("Post");
-		post.setBounds(100, 460, 150, 20);
-		post.addActionListener(this);
-		contentPane.add(post);
+		JLabel readcount = new JLabel("조회수 : "+bbsDto.getReadcount());
+		readcount.setBounds(10, 70, 100, 20);
+		contentPane.add(readcount);
+		
+		JLabel contentLabel = new JLabel("Content");
+		contentLabel.setBounds(10, 100, 50, 20);
+		contentPane.add(contentLabel);
+
+		
+		content = new JTextPane();
+		content.setText(bbsDto.getContent());
+		content.setEditable(false);
+		content.setBounds(20, 200, 335, 200);
+		
+		JScrollPane panel = new JScrollPane(content);
+		panel.setBounds(0, 120, 375, 350);
+		
+		contentPane.add(panel);
+		
+		System.out.println(bbsDto.getId());
+		System.out.println(Delegator.getInstance().getCurrent_User().getId());
+		System.out.println(bbsDto.getId().equals(Delegator.getInstance().getCurrent_User().getId()));
+		if (bbsDto.getId().equals(Delegator.getInstance().getCurrent_User().getId())) {
+	
+			deleteBtn = new JButton("Delete");
+			deleteBtn.setBounds(10, 480, 100, 50);
+			deleteBtn.addActionListener((ActionEvent e)-> {
+				if(JOptionPane.showConfirmDialog(null, "정말 삭제하겠습니까?") == 0) {
+					System.out.println("delete");
+					BbsDao.getInstance().delete(bbsDto);
+					new Msg("삭제되었습니다.");
+					this.dispose();
+				}
+			});
+			contentPane.add(deleteBtn);
+			
+			editBtn = new JButton("Edit");
+			editBtn.setBounds(110, 480, 100, 50);
+			editBtn.addActionListener((ActionEvent e)-> {
+				
+			});
+			contentPane.add(editBtn);
+			
+		}
+		
+		allPost = new JButton("All Post");
+		allPost.setBounds(100, 530, 150, 20);
+		allPost.addActionListener(this);
+		contentPane.add(allPost);
 		
 		myPost = new JButton("my post");
-		myPost.setBounds(100, 480, 150, 20);
+		myPost.setBounds(100, 550, 150, 20);
 		myPost.addActionListener(this);
 		contentPane.add(myPost);
 		
@@ -70,15 +118,13 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object obj = e.getSource();
-		BbsDao bbsDao = BbsDao.getInstance();
 		
-		if(obj == post) {
-			new Write();
-			this.dispose();
+		if(obj == allPost) {
+			new Bbs();
 		}else if(obj == myPost) {
 			new MyPost();
-			this.dispose();
 		}
+		this.dispose();
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -88,11 +134,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("pressed");
 		
-		int rowNum = table.getSelectedRow();
-		// 생성자로 번호만 넘기면 다른 뷰에서도 접근이 가능하다.
-		JOptionPane.showConfirmDialog(null, list.get(rowNum));
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
