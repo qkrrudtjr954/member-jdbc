@@ -7,10 +7,12 @@ import java.sql.SQLException;
 
 import db.DBClose;
 import db.DBConnection;
+import db.MySqlConnection;
 import dto.MemberDto;
 
 public class MemberDao {
 	private static MemberDao dao = null;
+	private static DBConnection DBConnector = null;
 	
 	private MemberDao() {
 		
@@ -19,6 +21,7 @@ public class MemberDao {
 	public static MemberDao getInstance() {
 		if(dao==null) {
 			dao = new MemberDao();
+			DBConnector = new MySqlConnection();
 		}
 		return dao;
 	}
@@ -30,7 +33,7 @@ public class MemberDao {
 		
 		String sql = "select id from member where id='"+id+"'";
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
@@ -60,7 +63,7 @@ public class MemberDao {
 				+ " from member "
 				+ " where id='"+id+"' and pwd='"+pwds+"'";
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement pstmt = null;
 		
 		ResultSet rs = null;
@@ -90,39 +93,6 @@ public class MemberDao {
 	}
 	
 	
-	
-	public int addMember(String id, char[] pwd, String name, String email) {
-		// 접속을 가져온다.
-		Connection conn = DBConnection.makeConnection();
-		PreparedStatement stmt = null;
-		
-		String pwds = new String(pwd);
-		
-		String sql = ""
-				+ "insert into member(id, pwd, name, email, auth) "
-				+ "values('"+id+"', '"+pwds+"', '"+name+"', '"+email+"', 3)";
-		
-		int count = 0;
-		
-		System.out.println("sql : " + sql);
-		
-		try {
-			
-			stmt = conn.prepareStatement(sql);	//	initializing
-			count = stmt.executeUpdate(sql);	// .executeUpdate() : 데이터베이스를 바꾸는 작업 (insert, update, delete)
-			// count는 바뀐 수
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally { 
-			DBClose.close(stmt, conn, null);
-		}
-		
-		return count;
-	}
-	
-	
 	public int delMember(int id, char[] pwd) {
 		
 		String pwds = new String(pwd);
@@ -131,7 +101,7 @@ public class MemberDao {
 		
 		PreparedStatement stmt = null;
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 
 		int count = 0;
 		
@@ -153,7 +123,10 @@ public class MemberDao {
 	
 	
 	public int addMember(MemberDto dto) {
-		String sql = " insert into member (id, pwd, name, email, auth ) " + " values (?, ?, ?, ?, 3 ) ";
+		String pwds = new String(dto.getPwd());
+		
+		String sql = " insert into member (id, pwd, name, email, auth ) "
+				+ "values ('"+dto.getId()+"', '"+pwds+"', '"+dto.getName()+"', '"+dto.getEmail()+"', 3) ";
 
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -163,16 +136,10 @@ public class MemberDao {
 		System.out.println("sql : " + sql);
 
 		try {
-			conn = DBConnection.makeConnection();
+			conn = DBConnector.makeConnection();
 			System.out.println("1/6 addMemeber Success");
 			stmt = conn.prepareStatement(sql); // initializing
 			System.out.println("2/6 addMemeber Success");
-			
-			
-			stmt.setString(1, dto.getId());
-			stmt.setString(2, new String(dto.getPwd()));
-			stmt.setString(3, dto.getName());
-			stmt.setString(4, dto.getEmail());
 			
 			// count는 바뀐 수
 			count = stmt.executeUpdate(sql); // .executeUpdate() : 데이터베이스를 바꾸는 작업 (insert, update, delete)

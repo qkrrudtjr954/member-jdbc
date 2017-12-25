@@ -26,6 +26,20 @@ alter table bbs
 add constraint fk_bbs foreign key (id)
 references member;
 */
+
+
+/*
+ create table bbs(
+	seq 		int		auto_increment	primary key,
+	id 		varchar(50)		not null,
+	title 		varchar(200)			not null,
+	content text(4000) 	not null,
+	wdate date						not null,
+	del 		int(1)					not null,
+	readcount int(8)		not null
+);
+
+*/
 public class BbsDto implements Serializable {
 	private int seq;
 	private String id;

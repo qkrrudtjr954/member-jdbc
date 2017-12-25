@@ -75,10 +75,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		panel.setBounds(0, 120, 375, 350);
 		
 		contentPane.add(panel);
-		
-		System.out.println(bbsDto.getId());
-		System.out.println(Delegator.getInstance().getCurrent_User().getId());
-		System.out.println(bbsDto.getId().equals(Delegator.getInstance().getCurrent_User().getId()));
+
 		if (bbsDto.getId().equals(Delegator.getInstance().getCurrent_User().getId())) {
 	
 			deleteBtn = new JButton("Delete");
@@ -96,7 +93,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 			editBtn = new JButton("Edit");
 			editBtn.setBounds(175, 490, 75, 20);
 			editBtn.addActionListener((ActionEvent e)-> {
-				
+				new Edit(bbsDto);
 			});
 			contentPane.add(editBtn);
 			

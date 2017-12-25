@@ -9,12 +9,13 @@ import java.util.List;
 
 import db.DBClose;
 import db.DBConnection;
+import db.MySqlConnection;
 import delegator.Delegator;
 import dto.BbsDto;
 
 public class BbsDao {
 	private static BbsDao dao = null;
-	
+	private static DBConnection DBConnector = null;
 	private BbsDao() {
 		
 	}
@@ -22,14 +23,15 @@ public class BbsDao {
 	public static BbsDao getInstance() {
 		if(dao==null) {
 			dao = new BbsDao();
+			DBConnector = new MySqlConnection();
 		}
 		return dao;
 	}
 	
 	public List<BbsDto> getBbsList(){
 		String sql = " select * from bbs where del != 1 order by seq desc ";
-		
-		Connection conn = DBConnection.makeConnection();
+		DBConnector.initConnect();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement ptmt = null;
 		
 		ResultSet rs = null;
@@ -72,7 +74,7 @@ public class BbsDao {
 		String sql = " select * from bbs where del != 1 and id='"
 					+ Delegator.getInstance().getCurrent_User().getId()+"'  order by seq  desc ";
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement ptmt = null;
 		
 		ResultSet rs = null;
@@ -118,7 +120,7 @@ public class BbsDao {
 				+ " content like '%"+str+"%' ) and "
 				+ " del != 1  order by seq ";
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement ptmt = null;
 		
 		ResultSet rs = null;
@@ -158,13 +160,21 @@ public class BbsDao {
 	
 	public BbsDto insert(String title, String content) {
 		// 접속을 가져온다.
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement ptmt = null;
 		
 		String id = Delegator.getInstance().getCurrent_User().getId();
-		String sql = " insert into bbs "
-				+ " values(seq_bbs.nextval, '"+id+"', '"+title+"', '"+content+"', sysdate, 0, 0) ";
 		
+		String sql = "";
+		
+		if(DBConnector.getClass().getName().equals("db.MySqlConnection")) {
+			sql = " insert into bbs(id, title, content, wdate, del, readcount) "
+					+ " values('"+id+"', '"+title+"', '"+content+"', now(), 0, 0); ";
+		}else {
+			sql = " insert into bbs "
+					+ " values(seq_bbs.nextval, '"+id+"', '"+title+"', '"+content+"', sysdate, 0, 0) ";
+		}
+
 		BbsDto bbsDto = null;
 		
 		int count = 0;
@@ -196,15 +206,25 @@ public class BbsDao {
 		
 		String id = Delegator.getInstance().getCurrent_User().getId();
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement ptmt = null;
 		ResultSet rs = null;
+		String sql;
 		
 //		String sql = "select * from bbs where id='"+id+"' and title='"+title+"' and content='"+content+"'";
-		String sql = " select seq, id, title, content, to_char(wdate, 'yyyy-mm-dd hh:mi:ss') as date, content, del, readcount from bbs "
-				+ " where id='"+id+"' and "
-				+ " title='"+title+"' and "
-				+ " content ='"+content+"' order by seq desc  ";
+		
+		if(DBConnector.getClass().getName().equals("db.MySqlConnection")) {
+			sql = " select seq, id, title, content, wdate as date, content, del, readcount from bbs "
+					+ " where id='"+id+"' and "
+					+ " title='"+title+"' and "
+					+ " content ='"+content+"' order by seq desc  ";
+		}else {
+			sql = " select seq, id, title, content, to_char(wdate, 'yyyy-mm-dd hh:mi:ss') as date, content, del, readcount from bbs "
+					+ " where id='"+id+"' and "
+					+ " title='"+title+"' and "
+					+ " content ='"+content+"' order by seq desc  ";
+		}
+		
 		
 		
 		System.out.println(" * BbsDao .getLastBbsDtoByTitle sql : "+sql);
@@ -242,7 +262,7 @@ public class BbsDao {
 		
 		PreparedStatement ptmt = null;
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 
 		int count = 0;
 		
@@ -265,7 +285,7 @@ public class BbsDao {
 	public void plusReadCount(BbsDto bbsDto) {
 		String sql = " update bbs set readcount=readcount+1 where seq="+bbsDto.getSeq()+"";
 		
-		Connection conn = DBConnection.makeConnection();
+		Connection conn = DBConnector.makeConnection();
 		PreparedStatement ptmt = null;
 		
 		try {
@@ -277,6 +297,38 @@ public class BbsDao {
 		} finally {
 			DBClose.close(ptmt, conn, null);
 		}
+	}
+	
+	public BbsDto update(int seq, String title, String content) {
+		// 접속을 가져온다.
+		Connection conn = DBConnector.makeConnection();
+		PreparedStatement ptmt = null;
+		
+		String sql = "update bbs set title='"+title+"', content='"+content+"' where seq="+seq;
+
+		BbsDto bbsDto = null;
+		
+		int count = 0;
+		
+		System.out.println(" * BbsDao .update() sql : " + sql);
+
+		try {
+			ptmt = conn.prepareStatement(sql);	//	initializing
+			count = ptmt.executeUpdate(sql);	// .executeUpdate() : 데이터베이스를 바꾸는 작업 (insert, update, delete)
+			// count는 바뀐 수
+			
+			if (count > 0) {
+				bbsDto = getLastBbsDtoByTitle(title, content);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally { 
+			DBClose.close(ptmt, conn, null);
+		}
+		
+		return bbsDto;
 	}
 }
 

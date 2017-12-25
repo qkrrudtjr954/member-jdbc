@@ -58,7 +58,7 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		rowData = new Object[list.size()][columnNames.length];
 		
 		for (int i = 0; i < list.size(); i++) {
-			rowData[i][0] = list.get(i).getSeq();
+			rowData[i][0] = i+1;
 			rowData[i][1] = list.get(i).getTitle();
 			rowData[i][2] = list.get(i).getReadcount();
 			rowData[i][3] = list.get(i).getWdate();
