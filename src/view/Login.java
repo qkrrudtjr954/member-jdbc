@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import admin.Admin;
+import dao.AdminDao;
 import dao.BbsDao;
 import dao.MemberDao;
 import delegator.Delegator;
@@ -80,19 +82,29 @@ public class Login extends JFrame implements ActionListener {
 		if(obj == signIn){
 			String _id = id.getText();
 			char[] _pwd = pwd.getPassword();
-			if(_id.equals("") || _pwd.equals("")) {
+			
+			if(_id.equals("") || _pwd.length < 1) {
 				JOptionPane.showMessageDialog(null, "아이디 및 비밀번호를 입력하세요.");
-			}else {
+			} else {
 				MemberDao dao = MemberDao.getInstance();
 				MemberDto member = dao.search(_id, _pwd);
 				
 				if(member==null) {
 					JOptionPane.showMessageDialog(null, "아이디 및 비밀번호가 일치하지 않습니다.");
 					pwd.setText("");
-				}else {
+				} else {
 					Delegator.getInstance().setCurrent_User(member);
-					List<BbsDto> list = BbsDao.getInstance().getBbsList();
-					new Bbs(list);
+					
+					if (_id.equals("admin")){
+						// admin user
+						List<BbsDto> list = AdminDao.getInstance().getAllBbsList();
+						new Admin(list);
+					} else {
+						// nomal user
+						List<BbsDto> list = BbsDao.getInstance().getBbsList();
+						new Bbs(list);						
+					}
+					
 					this.dispose();
 				}				
 			}

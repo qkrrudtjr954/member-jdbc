@@ -181,7 +181,7 @@ public class BbsDao {
 		
 		int count = 0;
 		
-		System.out.println(" * BbsDao .insert()sql : " + sql);
+		System.out.println(" * BbsDao .insert() sql : " + sql);
 
 		try {
 			ptmt = conn.prepareStatement(sql);	//	initializing
@@ -320,7 +320,46 @@ public class BbsDao {
 			// count는 바뀐 수
 			
 			if (count > 0) {
-				bbsDto = getLastBbsDtoByTitle(title, content);
+				bbsDto = getBbsBySeq(seq);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally { 
+			DBClose.close(ptmt, conn, null);
+		}
+		
+		return bbsDto;
+	}
+	
+	public BbsDto getBbsBySeq(int seq) {
+		String sql = " select * from bbs where seq="+seq;
+		
+		Connection conn = null;
+		PreparedStatement ptmt = null;
+		ResultSet rs = null;
+		
+		BbsDto bbsDto = new BbsDto();
+		
+		
+		System.out.println(" * BbsDao .getBbsBySeq() sql : " + sql);
+
+		try {
+			conn = DBConnector.makeConnection();
+			ptmt = conn.prepareStatement(sql);	//	initializing
+			rs = ptmt.executeQuery();
+			
+			if(rs.next()) {
+				bbsDto.setSeq(rs.getInt("seq"));
+				bbsDto.setId(rs.getString("id"));
+				
+				bbsDto.setTitle(rs.getString("title"));
+				bbsDto.setContent(rs.getString("content"));
+				bbsDto.setWdate(rs.getString("wdate"));
+				
+				bbsDto.setDel(rs.getInt("del"));
+				bbsDto.setReadcount(rs.getInt("readcount"));
 			}
 
 		} catch (SQLException e) {
