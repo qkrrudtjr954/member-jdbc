@@ -79,17 +79,20 @@ public class Login extends JFrame implements ActionListener {
 		if(obj == signIn){
 			String _id = id.getText();
 			char[] _pwd = pwd.getPassword();
-			
-			MemberDao dao = MemberDao.getInstance();
-			MemberDto member = dao.search(_id, _pwd);
-			
-			if(member==null) {
-				JOptionPane.showMessageDialog(null, "아이디 및 비밀번호가 일치하지 않습니다.");
-				pwd.setText("");
+			if(_id.equals("") || _pwd.equals("")) {
+				JOptionPane.showMessageDialog(null, "아이디 및 비밀번호를 입력하세요.");
 			}else {
-				Delegator.getInstance().setCurrent_User(member);
-				new Bbs();
-				this.dispose();
+				MemberDao dao = MemberDao.getInstance();
+				MemberDto member = dao.search(_id, _pwd);
+				
+				if(member==null) {
+					JOptionPane.showMessageDialog(null, "아이디 및 비밀번호가 일치하지 않습니다.");
+					pwd.setText("");
+				}else {
+					Delegator.getInstance().setCurrent_User(member);
+					new Bbs();
+					this.dispose();
+				}				
 			}
 		}else if(obj == signUp){
 			new Account();
