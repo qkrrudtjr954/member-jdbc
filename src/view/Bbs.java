@@ -98,7 +98,7 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		contentPane.add(myBbs);
 		
 
-		allPost = new JButton("모든 글");
+		allPost = new JButton("모든 글"); 
 		allPost.setBounds(100, 460, 150, 20);
 		allPost.addActionListener(this);
 		contentPane.add(allPost);
