@@ -98,7 +98,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createLineBorder(Color.red));
-		panel.setPreferredSize(new Dimension(370, list.size()*20));
+		panel.setPreferredSize(new Dimension(370, list.size()*60));
 		panel.setLayout(null);
 		
 		for(int i = 0; i<list.size(); i++) {

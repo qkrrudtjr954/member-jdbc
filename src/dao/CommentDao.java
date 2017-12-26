@@ -32,12 +32,14 @@ public class CommentDao {
 	public static int insert(String content, int seq) {
 		MemberDto current_user = Delegator.getInstance().getCurrent_User();
 		String sql = " insert into comments "
-				+ " values(sysdate, '"+content+"', '"+current_user.getId()+"', "+seq+")";
+				+ " values(sysdate, '"+content+"', '"+current_user.getId()+"', "+seq+", 0)";
 		
 		DBConnector.initConnect();
 		PreparedStatement ptmt = null;
 		Connection conn = null;
 		int count = 0;
+		
+		System.out.println(" * CommentDao .insert() sql: "+sql);
 		
 		try {
 			conn = DBConnector.makeConnection();
@@ -77,6 +79,7 @@ public class CommentDao {
 				comment.setContent(rs.getString("content"));
 				comment.setUser_id(rs.getString("user_id"));
 				comment.setWdate(rs.getString("wdate"));
+				comment.setDel(rs.getInt("del"));
 				
 				comments.add(comment);
 			}

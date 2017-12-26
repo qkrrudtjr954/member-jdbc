@@ -7,16 +7,23 @@ public class CommentDto implements Serializable {
 	String wdate;
 	String user_id;
 	int bbs_id;
-	
+	int del;
 	
 	public CommentDto() {
+		// TODO Auto-generated constructor stub
 	}
-	public CommentDto(String content, String wdate, String user_id, int bbs_id) {
+	public CommentDto(String content, String wdate, String user_id, int bbs_id, int del) {
 		super();
 		this.content = content;
 		this.wdate = wdate;
 		this.user_id = user_id;
 		this.bbs_id = bbs_id;
+		this.del = del;
+	}
+	@Override
+	public String toString() {
+		return "CommentDto [content=" + content + ", wdate=" + wdate + ", user_id=" + user_id + ", bbs_id=" + bbs_id
+				+ ", del=" + del + "]";
 	}
 	public String getContent() {
 		return content;
@@ -42,11 +49,14 @@ public class CommentDto implements Serializable {
 	public void setBbs_id(int bbs_id) {
 		this.bbs_id = bbs_id;
 	}
-	@Override
-	public String toString() {
-		return "CommentDto [content=" + content + ", wdate=" + wdate + ", user_id=" + user_id + ", bbs_id=" + bbs_id
-				+ "]";
+	public int getDel() {
+		return del;
 	}
+	public void setDel(int del) {
+		this.del = del;
+	}
+	
+	
 
 	
 	
