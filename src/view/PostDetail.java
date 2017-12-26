@@ -2,6 +2,7 @@ package view;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -95,30 +97,32 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		list = CommentDao.getComments(bbsDto.getSeq());
 		
 		JPanel panel = new JPanel();
+		panel.setBorder(BorderFactory.createLineBorder(Color.red));
+		panel.setPreferredSize(new Dimension(370, list.size()*20));
+		panel.setLayout(null);
 		
 		for(int i = 0; i<list.size(); i++) {
-			panel.setLayout(null);
 			JLabel user = new JLabel(list.get(i).getUser_id());
-			user.setBounds(0, (i+1)*20, 75, 20);
+			user.setBounds(0, i*60, 75, 20);
 			panel.add(user);
 			
-			JLabel content = new JLabel(list.get(i).getContent());
-			content.setBounds(75, (i+1)*20, 200, 20);
+			JLabel content = new JLabel("<html><p>"+list.get(i).getContent()+"</p></html>");
+			content.setBounds(5, i*60+20, 270, 40);
 			panel.add(content);
 			
-			JLabel wdate = new JLabel(list.get(i).getWdate());
-			wdate.setBounds(275, (i+1)*20, 100, 20);
+			JLabel wdate = new JLabel("<html><p>"+list.get(i).getWdate().replace(" ", "\n")+"</p></html>");
+			wdate.setBounds(280, i*60+20, 95, 40);
 			panel.add(wdate);
 		}
 		
 		JScrollPane showCommentPanel = new JScrollPane(panel);
-		showCommentPanel.setBounds(0, 420, 375, 150);
+		showCommentPanel.setBounds(0, 370, 375, 150);
 		
 		contentPane.add(showCommentPanel);
 		
 		JPanel writeCommentPanel = new JPanel();
 		writeCommentPanel.setLayout(null);
-		writeCommentPanel.setBounds(0, 370, 375, 50);
+		writeCommentPanel.setBounds(0, 520, 375, 50);
 		
 		comment = new JTextField();
 		comment.setLocation(0, 0);
@@ -175,7 +179,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		contentPane.add(btnPanel);
 		
 		
-		setBounds(100, 100, 375, 667);
+		setBounds(100, 100, 380, 667);
         setResizable(false);
         setVisible(true);
 	}

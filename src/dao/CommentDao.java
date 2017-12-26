@@ -53,7 +53,7 @@ public class CommentDao {
 	}
 	public static List<CommentDto> getComments(int seq){
 		List<CommentDto> comments = new ArrayList<>();
-		String sql = " select * from comments where bbs_id="+seq+" order by wdate desc";
+		String sql = " select * from comments where bbs_id="+seq+" and del=0 order by wdate desc";
 		
 		DBConnector.initConnect();
 		
