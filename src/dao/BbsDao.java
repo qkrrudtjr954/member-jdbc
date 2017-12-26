@@ -9,7 +9,7 @@ import java.util.List;
 
 import db.DBClose;
 import db.DBConnection;
-import db.MySqlConnection;
+import db.OracleConnection;
 import delegator.Delegator;
 import dto.BbsDto;
 
@@ -23,7 +23,7 @@ public class BbsDao {
 	public static BbsDao getInstance() {
 		if(dao==null) {
 			dao = new BbsDao();
-			DBConnector = new MySqlConnection();
+			DBConnector = new OracleConnection();
 		}
 		return dao;
 	}
@@ -214,12 +214,12 @@ public class BbsDao {
 //		String sql = "select * from bbs where id='"+id+"' and title='"+title+"' and content='"+content+"'";
 		
 		if(DBConnector.getClass().getName().equals("db.MySqlConnection")) {
-			sql = " select seq, id, title, content, wdate as date, content, del, readcount from bbs "
+			sql = " select seq, id, title, content, wdate, content, del, readcount from bbs "
 					+ " where id='"+id+"' and "
 					+ " title='"+title+"' and "
 					+ " content ='"+content+"' order by seq desc  ";
 		}else {
-			sql = " select seq, id, title, content, to_char(wdate, 'yyyy-mm-dd hh:mi:ss') as date, content, del, readcount from bbs "
+			sql = " select seq, id, title, content, to_char(wdate, 'yyyy-mm-dd hh:mi:ss') as wdate, content, del, readcount from bbs "
 					+ " where id='"+id+"' and "
 					+ " title='"+title+"' and "
 					+ " content ='"+content+"' order by seq desc  ";
@@ -239,7 +239,7 @@ public class BbsDao {
 				
 				bbsDto.setTitle(rs.getString("title"));
 				bbsDto.setContent(rs.getString("content"));
-				bbsDto.setWdate(rs.getString("date"));
+				bbsDto.setWdate(rs.getString("wdate"));
 				
 				bbsDto.setDel(rs.getInt("del"));
 				bbsDto.setReadcount(rs.getInt("readcount"));

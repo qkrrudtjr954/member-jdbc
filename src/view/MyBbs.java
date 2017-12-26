@@ -17,10 +17,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import dao.BbsDao;
+import delegator.Delegator;
 import dto.BbsDto;
 
 
-public class MyPost extends JFrame implements MouseListener, ActionListener{
+public class MyBbs extends JFrame implements MouseListener, ActionListener{
     
 	JTable table;
 	JScrollPane jScrPane;
@@ -35,9 +36,10 @@ public class MyPost extends JFrame implements MouseListener, ActionListener{
 	JTextField searchField;
 	JButton search;
 	JButton allPost;
+	JButton logout;
 	
 	
-	public MyPost() {
+	public MyBbs() {
 		
 		super("My Bbs List");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -94,6 +96,10 @@ public class MyPost extends JFrame implements MouseListener, ActionListener{
 		allPost.addActionListener(this);
 		contentPane.add(allPost);
 		
+		logout = new JButton("로그아웃");
+		logout.setBounds(275, 0, 100, 20);
+		logout.addActionListener(this);
+		contentPane.add(logout);
 		
 		setBounds(100, 100, 375, 667);
         setResizable(false);
@@ -114,6 +120,10 @@ public class MyPost extends JFrame implements MouseListener, ActionListener{
 			BbsDao.getInstance().search(str);
 		}else if(obj == allPost) {
 			new Bbs();
+			this.dispose();
+		}else if(obj == logout) {
+			Delegator.getInstance().setCurrent_User(null);
+			new Main();
 			this.dispose();
 		}
 	}

@@ -19,6 +19,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 import dao.BbsDao;
+import delegator.Delegator;
 import dto.BbsDto;
 
 
@@ -36,7 +37,8 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 	JButton post;
 	JTextField searchField;
 	JButton search;
-	JButton myPost;
+	JButton myBbs;
+	JButton logout;
 	
 	
 	public Bbs() {
@@ -90,11 +92,16 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		contentPane.add(search);
 		
 		
-		myPost = new JButton("내가 쓴 글");
-		myPost.setBounds(100, 440, 150, 20);
-		myPost.addActionListener(this);
-		contentPane.add(myPost);
+		myBbs = new JButton("내가 쓴 글");
+		myBbs.setBounds(100, 440, 150, 20);
+		myBbs.addActionListener(this);
+		contentPane.add(myBbs);
 		
+		
+		logout = new JButton("로그아웃");
+		logout.setBounds(275, 0, 100, 20);
+		logout.addActionListener(this);
+		contentPane.add(logout);
 		
 		
 		setBounds(100, 100, 375, 667);
@@ -125,8 +132,14 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 					this.dispose();
 				}
 			}
-		}else if(obj == myPost) {
-			new MyPost();
+		}else if(obj == myBbs) {
+			new MyBbs();
+			this.dispose();
+		}else if(obj == logout) {
+			Delegator.getInstance().setCurrent_User(null);
+			
+			JOptionPane.showMessageDialog(null, "정상적으로 로그아웃 됐습니다.");
+			new Main();
 			this.dispose();
 		}
 	}

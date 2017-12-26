@@ -125,7 +125,7 @@ public class Search extends JFrame implements MouseListener, ActionListener{
 				}				
 			}
 		}else if(obj == myPost) {
-			new MyPost();
+			new MyBbs();
 			this.dispose();
 		}
 	}

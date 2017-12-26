@@ -8,8 +8,7 @@ public class OracleConnection implements DBConnection{
 	
 	public void initConnect() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Class.forName("oracle.jdbc.driver.OracleDriver");
 			System.out.println("Driver Loading Success!!");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -21,8 +20,7 @@ public class OracleConnection implements DBConnection{
 		Connection conn = null;
 		
 		try {
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/member", "root", "Rudtjr1216");
-//			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "hr", "hr");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "hr", "hr");
 			System.out.println("Data Base is connected.");
 		} catch (SQLException e) {
 			e.printStackTrace();

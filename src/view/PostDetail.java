@@ -122,7 +122,7 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		if(obj == allPost) {
 			new Bbs();
 		}else if(obj == myPost) {
-			new MyPost();
+			new MyBbs();
 		}
 		this.dispose();
 	}
