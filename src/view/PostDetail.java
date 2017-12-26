@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,12 +15,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
 import dao.BbsDao;
-import dao.MemberDao;
+import dao.CommentDao;
 import delegator.Delegator;
 import dto.BbsDto;
+import dto.CommentDto;
 
 
 public class PostDetail extends JFrame implements MouseListener, ActionListener{
@@ -29,17 +33,28 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 	
 	JButton deleteBtn;
 	JButton editBtn;
+	JButton commentBtn;
 	
+	
+	JTable comments;
+	
+	List<CommentDto> list = null;
+	
+	
+	JTextField comment;
 	
 	JLabel title;
 	JLabel wdate;
 	JTextPane content;
 	
+	BbsDto bbsDto;
+	
 	public PostDetail(BbsDto bbsDto) {
-		
 		super("Detail");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
+		this.bbsDto= bbsDto;
+
 		BbsDao dao = BbsDao.getInstance();
 		dao.plusReadCount(bbsDto);
 		
@@ -69,17 +84,65 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		content = new JTextPane();
 		content.setText(bbsDto.getContent());
 		content.setEditable(false);
-		content.setBounds(20, 200, 335, 200);
+		content.setBounds(0, 120, 375, 250);
 		
-		JScrollPane panel = new JScrollPane(content);
-		panel.setBounds(0, 120, 375, 350);
-		
-		contentPane.add(panel);
+		JScrollPane contentPanel = new JScrollPane(content);
+		contentPanel.setBounds(0, 120, 375, 250);
+		contentPane.add(contentPanel);
 
+		
+		CommentDao commentDao = CommentDao.getInstance();
+		list = CommentDao.getComments(bbsDto.getSeq());
+		
+		JPanel panel = new JPanel();
+		
+		for(int i = 0; i<list.size(); i++) {
+			panel.setLayout(null);
+			JLabel user = new JLabel(list.get(i).getUser_id());
+			user.setBounds(0, (i+1)*20, 75, 20);
+			panel.add(user);
+			
+			JLabel content = new JLabel(list.get(i).getContent());
+			content.setBounds(75, (i+1)*20, 200, 20);
+			panel.add(content);
+			
+			JLabel wdate = new JLabel(list.get(i).getWdate());
+			wdate.setBounds(275, (i+1)*20, 100, 20);
+			panel.add(wdate);
+		}
+		
+		JScrollPane showCommentPanel = new JScrollPane(panel);
+		showCommentPanel.setBounds(0, 420, 375, 150);
+		
+		contentPane.add(showCommentPanel);
+		
+		JPanel writeCommentPanel = new JPanel();
+		writeCommentPanel.setLayout(null);
+		writeCommentPanel.setBounds(0, 370, 375, 50);
+		
+		comment = new JTextField();
+		comment.setLocation(0, 0);
+		comment.setSize(300, 50);
+		writeCommentPanel.add(comment);
+		
+		commentBtn = new JButton("댓글");
+		commentBtn.setLocation(300, 0);
+		commentBtn.setSize(75, 50);
+		commentBtn.addActionListener(this);
+		writeCommentPanel.add(commentBtn);
+		
+		contentPane.add(writeCommentPanel);
+
+		
+		
+		JPanel btnPanel = new JPanel();
+		btnPanel.setLayout(null);
+		btnPanel.setBounds(0, 580, 375, 40);
+		btnPanel.setBackground(Color.YELLOW);
 		if (bbsDto.getId().equals(Delegator.getInstance().getCurrent_User().getId())) {
 	
 			deleteBtn = new JButton("Delete");
-			deleteBtn.setBounds(100, 490, 75, 20);
+			deleteBtn.setBounds(100, 0, 75, 20);
 			deleteBtn.addActionListener((ActionEvent e)-> {
 				if(JOptionPane.showConfirmDialog(null, "정말 삭제하겠습니까?") == 0) {
 					System.out.println("delete");
@@ -88,26 +151,28 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 					this.dispose();
 				}
 			});
-			contentPane.add(deleteBtn);
+			btnPanel.add(deleteBtn);
 			
 			editBtn = new JButton("Edit");
-			editBtn.setBounds(175, 490, 75, 20);
+			editBtn.setBounds(175, 0, 75, 20);
 			editBtn.addActionListener((ActionEvent e)-> {
 				new Edit(bbsDto);
 			});
-			contentPane.add(editBtn);
+			btnPanel.add(editBtn);
 			
 		}
 		
 		allPost = new JButton("All Post");
-		allPost.setBounds(100, 530, 150, 20);
+		allPost.setBounds(75, 20, 100, 20);
 		allPost.addActionListener(this);
-		contentPane.add(allPost);
+		btnPanel.add(allPost);
 		
 		myPost = new JButton("my post");
-		myPost.setBounds(100, 550, 150, 20);
+		myPost.setBounds(175, 20, 100, 20);
 		myPost.addActionListener(this);
-		contentPane.add(myPost);
+		btnPanel.add(myPost);
+		
+		contentPane.add(btnPanel);
 		
 		
 		setBounds(100, 100, 375, 667);
@@ -121,10 +186,27 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 		
 		if(obj == allPost) {
 			new Bbs();
+			this.dispose();
 		}else if(obj == myPost) {
 			new MyBbs();
+			this.dispose();
+		} else if(obj == commentBtn) {
+			CommentDao commentDao = CommentDao.getInstance();
+			String content = comment.getText();
+			
+			if(content.length() < 5) {
+				JOptionPane.showMessageDialog(null, "댓글은 5글자 이상 작성해주세요.");
+			}else {
+				int count = commentDao.insert(content, this.bbsDto.getSeq());
+				
+				if(count > 0) {
+					new PostDetail(this.bbsDto);
+					this.dispose();
+				}else {
+					JOptionPane.showMessageDialog(null, "댓글을 입력할 수 없습니다.");
+				}
+			}
 		}
-		this.dispose();
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
