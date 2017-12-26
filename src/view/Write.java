@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -119,7 +120,8 @@ public class Write extends JFrame implements ActionListener {
 				}
 			}
 		}else {
-			new Bbs();
+			List<BbsDto> list = BbsDao.getInstance().getBbsList();
+			new Bbs(list);
 			this.dispose();
 		}
 	}

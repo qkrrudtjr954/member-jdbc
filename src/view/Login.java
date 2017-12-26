@@ -2,20 +2,21 @@ package view;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import dao.BbsDao;
 import dao.MemberDao;
 import delegator.Delegator;
+import dto.BbsDto;
 import dto.MemberDto;
 
 public class Login extends JFrame implements ActionListener {
@@ -90,7 +91,8 @@ public class Login extends JFrame implements ActionListener {
 					pwd.setText("");
 				}else {
 					Delegator.getInstance().setCurrent_User(member);
-					new Bbs();
+					List<BbsDto> list = BbsDao.getInstance().getBbsList();
+					new Bbs(list);
 					this.dispose();
 				}				
 			}

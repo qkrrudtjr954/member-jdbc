@@ -1,12 +1,20 @@
 package view;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
+import dao.BbsDao;
 import delegator.Delegator;
-
-import java.awt.*;
-import java.awt.event.*;
+import dto.BbsDto;
 
 public class Msg extends JFrame {
 	JLabel label;
@@ -29,7 +37,8 @@ public class Msg extends JFrame {
 				new Main();
 				super.dispose();
 			} else {
-				new Bbs();
+				List<BbsDto> list = BbsDao.getInstance().getBbsList();
+				new Bbs(list);
 				super.dispose();
 			}
 		});

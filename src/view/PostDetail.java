@@ -187,12 +187,14 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object obj = e.getSource();
-		
+		List<BbsDto> list = null;
 		if(obj == allPost) {
-			new Bbs();
+			list = BbsDao.getInstance().getBbsList();
+			new Bbs(list);
 			this.dispose();
 		}else if(obj == myPost) {
-			new MyBbs();
+			list = BbsDao.getInstance().getMyBbsList();
+			new Bbs(list);
 			this.dispose();
 		} else if(obj == commentBtn) {
 			CommentDao commentDao = CommentDao.getInstance();

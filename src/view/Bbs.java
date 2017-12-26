@@ -37,14 +37,17 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 	JButton post;
 	JTextField searchField;
 	JButton search;
+	JButton allPost;
 	JButton myBbs;
 	JButton logout;
 	
 	
-	public Bbs() {
+	public Bbs(List<BbsDto> list) {
 		
 		super("Bbs List");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		this.list = list;
 		
 		Container contentPane = getContentPane();
         contentPane.setBackground(Color.yellow);
@@ -53,9 +56,6 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
         JLabel title = new JLabel("Post List");
 		title.setBounds(150, 68, 200, 20);
 		contentPane.add(title);
-		
-		BbsDao bbsDao = BbsDao.getInstance();
-		list = bbsDao.getBbsList();
 		
 		rowData = new Object[list.size()][columnNames.length];
 		
@@ -83,11 +83,11 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		
 		
 		searchField = new JTextField();
-		searchField.setBounds(20, 480, 150, 20);
+		searchField.setBounds(20, 500, 150, 20);
 		contentPane.add(searchField);
 		
 		search = new JButton("검색");
-		search.setBounds(170, 480, 150, 20);
+		search.setBounds(170, 500, 150, 20);
 		search.addActionListener(this);
 		contentPane.add(search);
 		
@@ -96,6 +96,12 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		myBbs.setBounds(100, 440, 150, 20);
 		myBbs.addActionListener(this);
 		contentPane.add(myBbs);
+		
+
+		allPost = new JButton("모든 글");
+		allPost.setBounds(100, 460, 150, 20);
+		allPost.addActionListener(this);
+		contentPane.add(allPost);
 		
 		
 		logout = new JButton("로그아웃");
@@ -128,18 +134,24 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 				if(list == null) {
 					JOptionPane.showMessageDialog(null, "검색 결과가 없습니다.");
 				}else {
-					new Search(list);
+					list.stream().forEach(System.out::println);
+					new Bbs(list);
 					this.dispose();
 				}
 			}
 		}else if(obj == myBbs) {
-			new MyBbs();
+			List<BbsDto> list = BbsDao.getInstance().getMyBbsList();
+			new Bbs(list);
 			this.dispose();
 		}else if(obj == logout) {
 			Delegator.getInstance().setCurrent_User(null);
 			
 			JOptionPane.showMessageDialog(null, "정상적으로 로그아웃 됐습니다.");
 			new Main();
+			this.dispose();
+		}else if(obj == allPost) {
+			List<BbsDto> list = BbsDao.getInstance().getBbsList();
+			new Bbs(list);
 			this.dispose();
 		}
 	}
