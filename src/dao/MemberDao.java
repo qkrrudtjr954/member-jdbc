@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import db.DBClose;
 import db.DBConnection;
+import db.MySqlConnection;
 import db.OracleConnection;
 import dto.MemberDto;
 
@@ -21,7 +22,8 @@ public class MemberDao {
 	public static MemberDao getInstance() {
 		if(dao==null) {
 			dao = new MemberDao();
-			DBConnector = new OracleConnection();
+//			DBConnector = new OracleConnection();
+			DBConnector = new MySqlConnection();
 		}
 		return dao;
 	}

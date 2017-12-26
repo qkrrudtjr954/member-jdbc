@@ -192,10 +192,12 @@ public class PostDetail extends JFrame implements MouseListener, ActionListener{
 			list = BbsDao.getInstance().getBbsList();
 			new Bbs(list);
 			this.dispose();
+			
 		}else if(obj == myPost) {
 			list = BbsDao.getInstance().getMyBbsList();
 			new Bbs(list);
 			this.dispose();
+			
 		} else if(obj == commentBtn) {
 			CommentDao commentDao = CommentDao.getInstance();
 			String content = comment.getText();

@@ -9,6 +9,7 @@ import java.util.List;
 
 import db.DBClose;
 import db.DBConnection;
+import db.MySqlConnection;
 import db.OracleConnection;
 import delegator.Delegator;
 import dto.CommentDto;
@@ -24,15 +25,26 @@ public class CommentDao {
 	public static CommentDao getInstance() {
 		if(dao==null) {
 			dao = new CommentDao();
-			DBConnector = new OracleConnection();
+//			DBConnector = new OracleConnection();
+			DBConnector = new MySqlConnection();
 		}
 		return dao;
 	}
 	
 	public static int insert(String content, int seq) {
 		MemberDto current_user = Delegator.getInstance().getCurrent_User();
-		String sql = " insert into comments "
-				+ " values(sysdate, '"+content+"', '"+current_user.getId()+"', "+seq+", 0)";
+		
+		
+		String sql;
+		if(DBConnector.getClass().getName().equals("db.MySqlConnection")) {
+			sql = " insert into comments(content, wdate, user_id, bbs_id, del)"
+					+ " values('"+content+"', now(), '"+current_user.getId()+"', "+seq+", 0)";
+		}else {			
+			sql = " insert into comments "
+					+ " values(sysdate, '"+content+"', '"+current_user.getId()+"', "+seq+", 0)";
+		}
+		
+		
 		
 		DBConnector.initConnect();
 		PreparedStatement ptmt = null;

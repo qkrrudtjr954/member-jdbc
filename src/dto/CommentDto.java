@@ -2,6 +2,17 @@ package dto;
 
 import java.io.Serializable;
 
+/*
+create table comments(
+	content varchar(1000),
+    wdate datetime,
+    user_id varchar(50),
+    constraint fk_user_id foreign key(user_id) references member(id) on delete cascade,
+    bbs_id int,
+    constraint fk_bbs_id foreign key(bbs_id) references bbs(seq) on delete cascade,
+    del int(1)
+);
+ */
 public class CommentDto implements Serializable {
 	String content;
 	String wdate;

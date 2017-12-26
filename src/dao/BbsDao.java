@@ -9,6 +9,7 @@ import java.util.List;
 
 import db.DBClose;
 import db.DBConnection;
+import db.MySqlConnection;
 import db.OracleConnection;
 import delegator.Delegator;
 import dto.BbsDto;
@@ -23,7 +24,8 @@ public class BbsDao {
 	public static BbsDao getInstance() {
 		if(dao==null) {
 			dao = new BbsDao();
-			DBConnector = new OracleConnection();
+//			DBConnector = new OracleConnection();
+			DBConnector = new MySqlConnection();
 		}
 		return dao;
 	}
