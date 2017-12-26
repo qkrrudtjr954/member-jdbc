@@ -103,12 +103,10 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 		allPost.addActionListener(this);
 		contentPane.add(allPost);
 		
-		
 		logout = new JButton("로그아웃");
 		logout.setBounds(275, 0, 100, 20);
 		logout.addActionListener(this);
 		contentPane.add(logout);
-		
 		
 		setBounds(100, 100, 375, 667);
         setResizable(false);
@@ -130,7 +128,6 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 				JOptionPane.showMessageDialog(null, "찾고 싶은 문자를 입력하세요.");
 			}else {
 				List<BbsDto> list = bbsDao.search(query);
-								
 				if(list == null) {
 					JOptionPane.showMessageDialog(null, "검색 결과가 없습니다.");
 				}else {
@@ -155,13 +152,6 @@ public class Bbs extends JFrame implements MouseListener, ActionListener{
 			this.dispose();
 		}
 	}
-	
-	// list 를 인자로 받아 테이블을 refresh 해주는 함수
-	public void refreshTable(List<BbsDto> list) {
-		
-	}
-	
-	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
